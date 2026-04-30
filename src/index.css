@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+@layer components {
+  .glass-card {
+    @apply transition-all duration-300;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .glass-card:hover {
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.1);
+  }
+
+  .input-filled {
+    @apply w-full py-3 px-4 border-b-2 transition-all duration-200 outline-none;
+    background-color: #ffffff;
+    border-bottom-color: #24389c;
+  }
+
+  .input-filled:focus {
+    border-bottom-color: #00d2ff;
+  }
+}
+
+@layer base {
+  input:focus {
+    box-shadow: none !important;
+  }
+}
