@@ -1,5 +1,5 @@
 
-export default function CreateNewPost() {
+export default function AddPost() {
   return (
     <div>
       
