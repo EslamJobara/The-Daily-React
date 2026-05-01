@@ -1,4 +1,4 @@
-import { useState } from "react"; // 1. استيراد useState
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Post } from "../types/IPost";
 import { DEFAULT_AUTHOR_IMAGE } from "../layout/Avatar";
@@ -24,7 +24,10 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <article className="bg-white rounded-xl shadow-sm border border-black/5 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full">
+    <article 
+      onClick={() => setIsExpanded(!isExpanded)}
+      className="bg-white rounded-xl shadow-sm border border-black/5 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full cursor-pointer"
+    >
       {post.image_url && (
         <div className="w-full h-48 overflow-hidden shrink-0">
           <img
@@ -42,7 +45,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
           </span>
           
           {isOwner && (
-            <div className="flex gap-2">
+            <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => navigate(`/edit-post?id=${post.id}`)}
                 className="text-slate-400 hover:text-[#24389c] transition-colors"
@@ -70,7 +73,6 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
             </p>
             {post.content.length > 100 && (
                 <button 
-                    onClick={() => setIsExpanded(!isExpanded)}
                     className="text-[#24389c] text-xs font-bold mt-2 hover:underline"
                 >
                     {isExpanded ? "Show Less" : "Read More"}
