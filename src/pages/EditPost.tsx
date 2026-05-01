@@ -32,6 +32,7 @@ export default function EditPost() {
 
   useEffect(() => {
     async function fetchPost() {
+      if (!postId) return;
       try {
         const post = await getPostById(postId);
         reset({
@@ -63,6 +64,8 @@ export default function EditPost() {
   };
 
   const onSubmit = async (data: PostFormData) => {
+    if (!user || !postId) return;
+
     setIsLoading(true);
     try {
       let imageUrl: string | undefined = existingImageUrl || undefined;

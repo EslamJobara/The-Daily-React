@@ -43,6 +43,8 @@ export default function AddPost() {
   };
 
   const onSubmit = async (data: PostFormData) => {
+    if (!user) return;
+
     setIsLoading(true);
     try {
       let imageUrl: string | undefined;
