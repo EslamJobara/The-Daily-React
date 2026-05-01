@@ -9,12 +9,14 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 export default function AddPost() {
+//------------------Hooks-------------  
   const { user } = useAuth();
   const navigate = useNavigate();
+//------------------State-------------  
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+//------------------useForm-------------  
   const {
     register,
     handleSubmit,
@@ -26,7 +28,7 @@ export default function AddPost() {
       category: "LATEST",
     },
   });
-
+//------------------functions------------------  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;

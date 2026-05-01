@@ -9,17 +9,18 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 export default function EditPost() {
+  //------------------Hooks-------------  
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const postId = searchParams.get("id");
-  
+  //------------------State-------------  
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+//------------------useForm-------------  
   const {
     register,
     handleSubmit,
@@ -48,7 +49,7 @@ export default function EditPost() {
     }
     fetchPost();
   }, [postId, reset]);
-
+//------------------functions------------------  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       setImageFile(e.target.files[0]);
