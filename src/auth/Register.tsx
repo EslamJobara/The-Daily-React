@@ -1,8 +1,14 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import type { IRegisterFormInput } from "../types/IReagister";
+import { registerUser } from "../services/authService";
+import { useNavigate, NavLink } from "react-router-dom";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
-const Register: React.FC = () => {
+export default function Register() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -12,13 +18,23 @@ const Register: React.FC = () => {
 
   const password = watch("password");
 
-  const onSubmit = (data: IRegisterFormInput) => {
-    console.log("Register Data:", data);
+  const onSubmit = async (data: IRegisterFormInput) => {
+    setIsLoading(true);
+    try {
+      await registerUser(data.name, data.email, data.password);
+      toast.success("Account created successfully! Please log in.");
+      navigate("/login");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Registration failed";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="bg-[#fbf8ff] min-h-screen text-[#1a1b22] font-sans relative overflow-hidden flex flex-col">
-      {/* Decorative background elements */}
       <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#dee0ff] opacity-30 blur-3xl z-0"></div>
       <div className="absolute bottom-[-20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-[#b6ebff] opacity-30 blur-3xl z-0"></div>
 
@@ -42,7 +58,6 @@ const Register: React.FC = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-5"
             >
-              {/* Name Field */}
               <div className="flex flex-col gap-1">
                 <label
                   className="font-bold text-[#454652] uppercase tracking-widest text-[10px]"
@@ -64,7 +79,6 @@ const Register: React.FC = () => {
                 )}
               </div>
 
-              {/* Email Field */}
               <div className="flex flex-col gap-1">
                 <label
                   className="font-bold text-[#454652] uppercase tracking-widest text-[10px]"
@@ -92,7 +106,6 @@ const Register: React.FC = () => {
                 )}
               </div>
 
-              {/* Password Field */}
               <div className="flex flex-col gap-1">
                 <label
                   className="font-bold text-[#454652] uppercase tracking-widest text-[10px]"
@@ -117,7 +130,6 @@ const Register: React.FC = () => {
                 )}
               </div>
 
-              {/* Confirm Password Field */}
               <div className="flex flex-col gap-1">
                 <label
                   className="font-bold text-[#454652] uppercase tracking-widest text-[10px]"
@@ -144,20 +156,25 @@ const Register: React.FC = () => {
               </div>
 
               <button
-                className="w-full mt-4 bg-gradient-to-r from-[#24389c] to-[#00d2ff] text-white font-bold py-4 rounded uppercase tracking-widest hover:opacity-90 transition-opacity flex justify-center items-center gap-2 active:scale-[0.98]"
+                className="w-full mt-4 bg-gradient-to-r from-[#24389c] to-[#00d2ff] text-white font-bold py-4 rounded uppercase tracking-widest hover:opacity-90 transition-opacity flex justify-center items-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 type="submit"
+                disabled={isLoading}
               >
-                <span>Register</span>
-                <span className="material-symbols-outlined">arrow_forward</span>
+                <span>{isLoading ? "Creating Account..." : "Register"}</span>
+                {!isLoading && (
+                  <span className="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                )}
               </button>
 
               <div className="text-center mt-2">
-                <a
+                <NavLink
                   className="text-sm font-bold text-[#24389c] hover:text-[#00d2ff] transition-colors"
-                  href="/login"
+                  to="/login"
                 >
                   Already have an account? Login
-                </a>
+                </NavLink>
               </div>
             </form>
           </div>
@@ -165,6 +182,4 @@ const Register: React.FC = () => {
       </main>
     </div>
   );
-};
-
-export default Register;
+}

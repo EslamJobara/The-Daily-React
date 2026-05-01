@@ -1,8 +1,14 @@
 import { useForm } from "react-hook-form";
 import type { ILoginFormInput } from "../types/ILogin";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authService";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -15,9 +21,19 @@ export default function Login() {
     },
   });
 
-  const onSubmit: (data: ILoginFormInput) => void = (data) => {
-    console.log("Form Data:", data);
-    // هنا هتعمل الـ API Call بتاعك
+  const onSubmit = async (data: ILoginFormInput) => {
+    setIsLoading(true);
+    try {
+      await loginUser(data.email, data.password);
+      toast.success("Welcome back!");
+      navigate("/");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Login failed";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -111,13 +127,16 @@ export default function Login() {
 
             {/* Submit Button */}
             <button
-              className="mt-2 w-full bg-gradient-to-r from-[#24389c] to-[#00677f] text-white font-bold py-4 px-6 rounded-lg hover:opacity-90 transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] cursor-pointer"
+              className="mt-2 w-full bg-gradient-to-r from-[#24389c] to-[#00677f] text-white font-bold py-4 px-6 rounded-lg hover:opacity-90 transition-all duration-200 flex justify-center items-center gap-2 active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               type="submit"
+              disabled={isLoading}
             >
-              <span>Sign In</span>
-              <span className="material-symbols-outlined text-[20px]">
-                login
-              </span>
+              <span>{isLoading ? "Signing In..." : "Sign In"}</span>
+              {!isLoading && (
+                <span className="material-symbols-outlined text-[20px]">
+                  login
+                </span>
+              )}
             </button>
           </form>
 
