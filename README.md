@@ -2,8 +2,6 @@
 
 Here is a comprehensive list of all the documentation and resources used to build this project:
 
-*(Note: AI assistance was utilized to write security policies for creating, updating, deleting posts, and deleting images from Supabase storage and making this README.md file if you want the original typed please read SOURCES.md).*
-
 
 ### Form Validation
 - [React Hook Form - Get Started](https://react-hook-form.com/get-started)
@@ -32,6 +30,8 @@ Here is a comprehensive list of all the documentation and resources used to buil
 - [Uploading Image to Supabase Storage](https://www.reddit.com/r/Supabase/comments/18q5lus/how_do_i_upload_an_image_to_supabase_and_have_the/)
 - [Creating Storage Buckets](https://supabase.com/docs/guides/storage/buckets/creating-buckets)
 - [Standard Uploads](https://supabase.com/docs/guides/storage/uploads/standard-uploads)
+
+*(Note: AI assistance was utilized to write security policies for creating, updating, deleting posts, and deleting images from Supabase storage and some overall help with the project and making this README.md file if you want the original typed please read SOURCES.md).*
 
 
 ---
