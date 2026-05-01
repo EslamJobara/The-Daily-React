@@ -63,7 +63,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
           {post.title}
         </h2>
         
-        <p className="text-slate-600 text-sm mb-6 line-clamp-3 leading-relaxed">
+        <p className="text-slate-600 text-sm mb-6 leading-relaxed">
           {post.content}
         </p>
         
