@@ -33,6 +33,13 @@ export default function AddPost() {
     setImageFile(file);
   };
 
+  const removeImage = () => {
+    setImageFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const onSubmit = async (data: PostFormData) => {
     if (!user) {
       toast.error("You must be logged in to create a post");
@@ -41,16 +48,21 @@ export default function AddPost() {
     }
 
     setIsLoading(true);
-    let imageUrl: string | undefined;
-    if (imageFile) {
-      imageUrl = await uploadPostImage(imageFile, user.id);
-    }
+    try {
+      let imageUrl: string | undefined;
+      if (imageFile) {
+        imageUrl = await uploadPostImage(imageFile, user.id);
+      }
 
-    await createPost({ ...data, image_url: imageUrl }, user);
-    toast.success("Post published successfully!");
-    reset();
-    navigate("/");
-    setIsLoading(false);
+      await createPost({ ...data, image_url: imageUrl }, user);
+      toast.success("Post published successfully!");
+      reset();
+      navigate("/");
+    } catch (error) {
+      toast.error("Failed to publish post");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -70,6 +82,14 @@ export default function AddPost() {
               </p>
             </div>
             <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                className="px-6 py-3 border border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-widest rounded-sm hover:bg-slate-50 transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+
               <button
                 type="submit"
                 disabled={isLoading}
@@ -99,7 +119,7 @@ export default function AddPost() {
             </label>
             <select
               {...register("category")}
-              className="input-filled rounded-sm border-slate-200 text-sm text-slate-700"
+              className="rounded-sm border-slate-200 text-sm text-slate-700 bg-white p-2"
             >
               <option value="LATEST">Latest</option>
               <option value="TUTORIAL">Tutorial</option>
@@ -129,6 +149,16 @@ export default function AddPost() {
               <span className="text-sm text-slate-500 flex-grow truncate">
                 {imageFile ? imageFile.name : "No file chosen"}
               </span>
+
+              {imageFile && (
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                >
+                  Remove
+                </button>
+              )}
             </div>
 
             <input
