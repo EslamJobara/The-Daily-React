@@ -1,3 +1,4 @@
+import { useState } from "react"; // 1. استيراد useState
 import { useNavigate } from "react-router-dom";
 import type { Post } from "../types/IPost";
 import { DEFAULT_AUTHOR_IMAGE } from "../layout/Avatar";
@@ -20,11 +21,12 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isOwner = user && user.id === post.user_id;
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <article className="bg-white rounded-xl shadow-sm border border-black/5 overflow-hidden group hover:shadow-md transition-shadow">
+    <article className="bg-white rounded-xl shadow-sm border border-black/5 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full">
       {post.image_url && (
-        <div className="w-full h-48 overflow-hidden">
+        <div className="w-full h-48 overflow-hidden shrink-0">
           <img
             alt={post.title}
             src={post.image_url}
@@ -33,7 +35,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
         </div>
       )}
       
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-3">
           <span className="text-[#24389c] font-bold text-[10px] uppercase tracking-widest bg-[#24389c]/10 px-2 py-1 rounded-sm">
             {post.category}
@@ -62,12 +64,21 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
         <h2 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-[#24389c] transition-colors">
           {post.title}
         </h2>
+        <div className="mb-6">
+            <p className={`text-slate-600 text-sm leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''}`}>
+              {post.content}
+            </p>
+            {post.content.length > 100 && (
+                <button 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="text-[#24389c] text-xs font-bold mt-2 hover:underline"
+                >
+                    {isExpanded ? "Show Less" : "Read More"}
+                </button>
+            )}
+        </div>
         
-        <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-          {post.content}
-        </p>
-        
-        <div className="flex items-center gap-3 pt-4 border-t border-black/5">
+        <div className="mt-auto flex items-center gap-3 pt-4 border-t border-black/5">
           <img
             src={DEFAULT_AUTHOR_IMAGE}
             className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-50"
