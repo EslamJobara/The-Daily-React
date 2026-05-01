@@ -33,7 +33,6 @@ export default function EditPost() {
   useEffect(() => {
     async function fetchPost() {
       try {
-        if (!postId) return;
         const post = await getPostById(postId);
         reset({
           title: post.title,
@@ -42,7 +41,7 @@ export default function EditPost() {
         });
         if (post.image_url) setExistingImageUrl(post.image_url);
       } catch (error) {
-        toast.error("Failed to load post");
+        toast.error("Error: " + error);
       } finally {
         setIsFetching(false);
       }
@@ -64,13 +63,6 @@ export default function EditPost() {
   };
 
   const onSubmit = async (data: PostFormData) => {
-    if (!user) {
-      toast.error("You must be logged in to edit a post");
-      return navigate("/login");
-    }
-
-    if (!postId) return;
-
     setIsLoading(true);
     try {
       let imageUrl: string | undefined = existingImageUrl || undefined;
@@ -83,7 +75,7 @@ export default function EditPost() {
       toast.success("Post updated successfully!");
       navigate("/");
     } catch (error) {
-      toast.error("Failed to update post");
+      toast.error("Error: " + error);
     } finally {
       setIsLoading(false);
     }

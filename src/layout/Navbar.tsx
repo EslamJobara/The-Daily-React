@@ -16,8 +16,8 @@ export default function Navbar() {
       toast.success("Signed out successfully");
       setDropdownOpen(false);
       navigate("/login");
-    } catch {
-      toast.error("Failed to sign out");
+    } catch (error) {
+      toast.error("Error: " + error);
     }
   };
 

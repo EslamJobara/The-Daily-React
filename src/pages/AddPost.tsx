@@ -43,12 +43,6 @@ export default function AddPost() {
   };
 
   const onSubmit = async (data: PostFormData) => {
-    if (!user) {
-      toast.error("You must be logged in to create a post");
-      navigate("/login");
-      return;
-    }
-
     setIsLoading(true);
     try {
       let imageUrl: string | undefined;
@@ -61,7 +55,7 @@ export default function AddPost() {
       reset();
       navigate("/");
     } catch (error) {
-      toast.error("Failed to publish post");
+      toast.error("Error: " + error);
     } finally {
       setIsLoading(false);
     }
