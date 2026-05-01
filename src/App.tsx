@@ -14,7 +14,7 @@ export default function App() {
     location.pathname !== "/login" && location.pathname !== "/register";
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Toaster
         position="top-center"
         toastOptions={{
@@ -40,14 +40,16 @@ export default function App() {
         }}
       />
       {showNavBarFooter && <Navbar />}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/add-post" element={<AddPost />} />
-        <Route path="/edit-post" element={<EditPost />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
+      <div className="flex-grow flex flex-col">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/add-post" element={<AddPost />} />
+          <Route path="/edit-post" element={<EditPost />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
       {showNavBarFooter && <Footer />}
-    </>
+    </div>
   );
 }

@@ -1,67 +1,70 @@
+import { useEffect, useState } from "react";
+import type { Post } from "../types/IPost";
+import { getAllPosts, deletePost } from "../services/postService";
+import PostCard from "../components/PostCard";
+import toast from "react-hot-toast";
+
 export default function Home() {
-  return (
-    <div>
-      <div className="bg-[#FAFAFA] min-h-screen flex flex-col">
-        <main className="flex-grow max-w-7xl mx-auto px-6 mt-10 mb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Hero Post */}
-            <article className="lg:col-span-8 glass-card rounded-xl overflow-hidden group cursor-pointer">
-              <div className="relative h-[400px] overflow-hidden">
-                <img
-                  alt="Hero"
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                  src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070"
-                />
-                <span className="absolute top-6 left-6 bg-white/90 backdrop-blur text-indigo-600 font-bold text-xs px-3 py-1 rounded-sm border">
-                  LATEST
-                </span>
-              </div>
-              <div className="p-8">
-                <h1 className="text-4xl font-black mb-4 group-hover:text-indigo-600 transition-colors">
-                  The React 19 Revolution
-                </h1>
-                <p className="text-slate-600 text-lg mb-6 line-clamp-3">
-                  A deep dive into experimental features and architectural
-                  shifts.
-                </p>
-                <div className="flex items-center gap-4">
-                  <img
-                    src="https://i.pravatar.cc/100"
-                    className="w-10 h-10 rounded-full"
-                    alt="author"
-                  />
-                  <div>
-                    <p className="font-bold text-sm">Sarah Chen</p>
-                    <p className="text-slate-400 text-xs">
-                      Oct 24, 2024 · 8 min read
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </article>
+  //------------------Hooks-------------
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
-            {/* Sidebar */}
-            <aside className="lg:col-span-4 flex flex-col gap-8">
-              <div className="glass-card rounded-xl p-6 group cursor-pointer">
-                <span className="text-indigo-600 font-bold text-[10px] uppercase tracking-widest">
-                  Tutorial
-                </span>
-                <h2 className="text-xl font-bold mt-2 group-hover:text-indigo-600">
-                  TypeScript Generics
-                </h2>
-                <p className="text-slate-500 text-sm mt-2">
-                  Master advanced type safety patterns.
-                </p>
-              </div>
-              {/* كرر المقالات الجانبية هنا */}
-            </aside>
-          </div>
-        </main>
+  //------------------use effect-------------
+  useEffect(() => {
+    async function fetchPosts() {
+      const data = await getAllPosts();
+      setPosts(data);
+      setLoading(false);
+    }
+    fetchPosts();
+  }, []);
+  //------------------functions------------------
+  const handleDelete = async (postId: string) => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+    await deletePost(postId);
+    setPosts((prev) => prev.filter((p) => p.id !== postId));
+    toast.success("Post deleted");
+  };
 
-        <button className="fixed bottom-8 right-8 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform">
-          <span className="material-symbols-outlined">add</span>
-        </button>
+  if (loading) {
+    return (
+      <div className="bg-[#fbf8ff] min-h-screen flex items-center justify-center">
+        <p className="text-slate-400 font-medium tracking-wide">Loading posts...</p>
       </div>
+    );
+  }
+
+  return (
+    <div className="bg-[#fbf8ff] flex-grow flex flex-col pt-10 pb-20">
+      <main className="flex-grow max-w-7xl mx-auto px-6 w-full">
+        
+        <div className="flex justify-between items-end mb-10 border-b border-black/5 pb-6">
+          <div>
+            <h1 className="text-4xl font-black italic text-slate-900 tracking-tight uppercase">
+              Community Posts
+            </h1>
+            <p className="text-slate-500 mt-2">
+              Discover the latest insights from React developers.
+            </p>
+          </div>       
+        </div>
+
+        {posts.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-xl border border-black/5 shadow-sm">
+            <span className="material-symbols-outlined text-6xl text-slate-200 mb-4">
+              article
+            </span>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">No posts yet</h2>
+            <p className="text-slate-500">Be the first to share something!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} onDelete={handleDelete} />
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }

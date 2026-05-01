@@ -1,9 +1,10 @@
-import { useForm } from "react-hook-form";
-import type { IRegisterFormInput } from "../types/IReagister";
-import { registerUser } from "../services/authService";
-import { useNavigate, NavLink } from "react-router-dom";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useNavigate, NavLink } from "react-router-dom";
+import { registerUser } from "../services/register";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type IRegisterFormInput, registerSchema } from "../types/IRegister";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -12,25 +13,17 @@ export default function Register() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<IRegisterFormInput>();
-
-  const password = watch("password");
+  } = useForm<IRegisterFormInput>({
+    resolver: zodResolver(registerSchema),
+  });
 
   const onSubmit = async (data: IRegisterFormInput) => {
     setIsLoading(true);
-    try {
-      await registerUser(data.name, data.email, data.password);
-      toast.success("Account created successfully! Please log in.");
-      navigate("/login");
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "Registration failed";
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
+    await registerUser(data.name, data.email, data.password);
+    toast.success("Account created successfully! Please log in.");
+    navigate("/login");
+    setIsLoading(false);
   };
 
   return (
@@ -41,9 +34,11 @@ export default function Register() {
       <main className="w-full max-w-screen-2xl mx-auto px-6 flex items-center justify-center relative z-10 flex-grow py-20">
         <div className="w-full max-w-md">
           <div className="text-center mb-10">
-            <h1 className="text-5xl font-black tracking-tighter italic uppercase text-[#1a1b22]">
-              The Daily React
-            </h1>
+            <NavLink to="/">
+              <h1 className="text-5xl font-black tracking-tighter italic uppercase text-[#1a1b22] hover:text-[#24389c] transition-colors">
+                The Daily React
+              </h1>
+            </NavLink>
             <p className="text-lg text-[#454652] mt-4">
               Join the editorial community.
             </p>
@@ -66,7 +61,7 @@ export default function Register() {
                   Name
                 </label>
                 <input
-                  {...register("name", { required: "Name is required" })}
+                  {...register("name")}
                   className="input-filled w-full py-3 px-4 border-b-2 text-[#1a1b22] placeholder:text-slate-300"
                   id="name"
                   placeholder="Your full name"
@@ -87,13 +82,7 @@ export default function Register() {
                   Email Address
                 </label>
                 <input
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "Invalid email format",
-                    },
-                  })}
+                  {...register("email")}
                   className="input-filled w-full py-3 px-4 border-b-2 text-[#1a1b22] placeholder:text-slate-300"
                   id="email"
                   placeholder="you@example.com"
@@ -114,10 +103,7 @@ export default function Register() {
                   Password
                 </label>
                 <input
-                  {...register("password", {
-                    required: "Password is required",
-                    minLength: { value: 8, message: "Minimum 8 characters" },
-                  })}
+                  {...register("password")}
                   className="input-filled w-full py-3 px-4 border-b-2 text-[#1a1b22] placeholder:text-slate-300"
                   id="password"
                   placeholder="••••••••"
@@ -138,11 +124,7 @@ export default function Register() {
                   Confirm Password
                 </label>
                 <input
-                  {...register("confirmPassword", {
-                    required: "Please confirm your password",
-                    validate: (value) =>
-                      value === password || "Passwords do not match",
-                  })}
+                  {...register("confirmPassword")}
                   className="input-filled w-full py-3 px-4 border-b-2 text-[#1a1b22] placeholder:text-slate-300"
                   id="confirm-password"
                   placeholder="••••••••"
@@ -169,14 +151,29 @@ export default function Register() {
               </button>
 
               <div className="text-center mt-2">
-                <NavLink
-                  className="text-sm font-bold text-[#24389c] hover:text-[#00d2ff] transition-colors"
-                  to="/login"
-                >
-                  Already have an account? Login
-                </NavLink>
+                <p className="text-sm text-[#454652]">
+                  Already have an account?{" "}
+                  <NavLink
+                    className="font-bold text-[#24389c] hover:text-[#00d2ff] transition-colors"
+                    to="/login"
+                  >
+                    Login
+                  </NavLink>
+                </p>
               </div>
             </form>
+          </div>
+
+          <div className="text-center mt-6">
+            <NavLink
+              to="/"
+              className="text-sm text-[#454652] hover:text-[#24389c] transition-colors inline-flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-[16px]">
+                arrow_back
+              </span>
+              Back to Home
+            </NavLink>
           </div>
         </div>
       </main>
